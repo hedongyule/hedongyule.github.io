@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1,user-scalable=no" />
+<title>登录</title>
+<style>
+* {
+	box-sizing: border-box;
+	-webkit-box-sizing: border-box;
+}
+.page {
+	position: fixed;
+	top: 0px;
+	bottom: 0px;
+	left: 0px;
+	right: 0px;
+}
+.hide {
+	display: none;
+}
+
+#login {
+	background-image: url(img/bg3.jpg);
+	background-size: cover;
+}
+#login-panel {
+	position: absolute;
+	top: 30%;
+	width: 100%;
+}
+#login-panel input[type='text'],
+#login-panel input[type='password'] {
+	width: 70%;
+	margin-left: 15%;
+	height: 30px;
+	margin-bottom: 10px;
+	border-radius: 3px;
+	border: 1px solid #c0c0c0;
+	padding-left: 5px;
+}
+#btn-login {
+	width: 60%;
+	height: 30px;
+	margin-left: 20%;
+	background-color: #4a8bc2;
+	color: white;
+	border: none;
+	border-radius: 3px;
+	margin-top: 30px;
+}
+#link-register {
+	font-size: 14px;
+	text-decoration: underline;
+	color: #4A8BC2;
+	margin-top: 20px;
+	margin-left: 60%;
+}
+</style>
+</head>
+<body>
+<div id="login" class="page">
+	<div id="login-panel">
+		<input id="input-name" type="text" placeholder="请输入用户名" maxlength="2" />
+		<input id="input-password" type="password" placeholder="请输入密码" maxlength="16" />
+		<button id="btn-login" type="button">登录</button>
+		<div id="link-register">快速注册</div>
+	</div>
+</div>
+</body>
+<script type="text/javascript" src="http://45.250.196.236/front/js/zepto.min.js" ></script>
+<script type="text/javascript" src="http://45.250.196.236/front/js/touch.min.js" ></script>
+<script type="text/javascript" src="http://45.250.196.236/common/js/config.js" ></script>
+<script>
+var crowdId = localStorage.getItem("crowdId");
+var token = localStorage.getItem("token");
+if (token) {
+	$.ajax({
+		type:"post",
+		url: config.httpPath + "/front/user/justLogin;jsessionid=" + token,
+		success: function(data) {
+			loading = false;
+			if (data.code != 200) {
+				alert(data.msg);
+			} else if (data.data) {
+				location.href = "chat.html";
+			}
+		}
+	});
+}
+var groups = location.href.match(/(\?crowdId\=)(\d+)(\&|$)/);
+if (groups) {
+	crowdId = groups[2];
+}
+var loading = false;
+$("#btn-login").on("tap", function(){
+	var name = $("#input-name").val();
+	var password = $("#input-password").val();
+	if (!name) {
+		alert("用户名不能为空！");
+		return;
+	}
+	if (!password) {
+		alert("密码不能为空！");
+		return;
+	}
+	if (loading) {
+		return;
+	}
+	loading = true;
+	$.ajax({
+		type:"post",
+		url: config.httpPath + "/front/user/login",
+		data: {
+			name: name,
+			password: password
+		},
+		success: function(data) {
+			loading = false;
+			if (data.code != 200) {
+				alert(data.msg);
+			} else {
+				localStorage.setItem("token", data.data.token);
+				location.href = "chat.html";
+			}
+		}
+	});
+});
+$("#link-register").on("tap", function(){
+	location.href = "register.html";
+});
+</script>
+</html>
+
