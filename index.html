@@ -52,17 +52,23 @@ body, html {
 <body>
 <div id="weixin-tip">
     <p>
-        <img src="img/wx-browser.png" alt="微信扫描打开APP下载链接提示用浏览器打开">
+        <img src="wx-browser.png" alt="微信扫描打开APP下载链接提示用浏览器打开">
         <span id="close" title="关闭" class="close">	</span>
     </p>
 </div>
 </body>
 <script>
+var crowdId = null;
+var groups = location.href.match(/(\?crowdId\=)(\d+)(\&|$)/);
+if (groups) {
+	crowdId = groups[2];
+	localStorage.setItem("crowdId", crowdId);
+}
 var ua = navigator.userAgent;
 if(ua.toLowerCase().match(/MicroMessenger/i) == "micromessenger") {
 	document.querySelector("#weixin-tip").style.display = "block";
 } else {
-	location.href = "http://45.250.196.236/front/login.html";
+	location.href = "http://45.250.196.236/front/login.html?crowdId=" + crowdId;
 }
 </script>
 </html>
